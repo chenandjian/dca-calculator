@@ -1,509 +1,601 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>定投计算器</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Noto+Serif+SC:wght@400;600&display=swap" rel="stylesheet">
-<style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>定投计算器</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Noto+Serif+SC:wght@400;600&display=swap"
+    rel="stylesheet">
+  <style>
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
-  :root {
-    --bg: #F5F2EC;
-    --surface: #FDFBF7;
-    --ink: #1A1714;
-    --ink2: #6B6560;
-    --ink3: #A8A39D;
-    --rule: #E0DBD4;
-    --accent: #C84B2F;
-    --accent-light: #F7EDE9;
-    --green: #2D6A4F;
-    --green-light: #E8F5EF;
-    --amber: #92580A;
-    --amber-light: #FBF3E3;
-    --border-r: 2px;
-  }
+    :root {
+      --bg: #F5F2EC;
+      --surface: #FDFBF7;
+      --ink: #1A1714;
+      --ink2: #6B6560;
+      --ink3: #A8A39D;
+      --rule: #E0DBD4;
+      --accent: #C84B2F;
+      --accent-light: #F7EDE9;
+      --green: #2D6A4F;
+      --green-light: #E8F5EF;
+      --amber: #92580A;
+      --amber-light: #FBF3E3;
+      --border-r: 2px;
+    }
 
-  body {
-    background: var(--bg);
-    color: var(--ink);
-    font-family: 'Noto Serif SC', serif;
-    min-height: 100vh;
-    display: flex;
-    align-items: flex-start;
-    justify-content: center;
-    padding: 3rem 1rem 4rem;
-  }
+    body {
+      background: var(--bg);
+      color: var(--ink);
+      font-family: 'Noto Serif SC', serif;
+      min-height: 100vh;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding: 3rem 1rem 4rem;
+    }
 
-  .container {
-    width: 100%;
-    max-width: 640px;
-  }
+    .container {
+      width: 100%;
+      max-width: 640px;
+    }
 
-  header {
-    margin-bottom: 2.5rem;
-    border-bottom: 1.5px solid var(--ink);
-    padding-bottom: 1rem;
-  }
+    header {
+      margin-bottom: 2.5rem;
+      border-bottom: 1.5px solid var(--ink);
+      padding-bottom: 1rem;
+    }
 
-  header h1 {
-    font-size: 1.75rem;
-    font-weight: 600;
-    letter-spacing: -0.02em;
-    line-height: 1.2;
-  }
+    header h1 {
+      font-size: 1.75rem;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      line-height: 1.2;
+    }
 
-  header p {
-    font-family: 'DM Mono', monospace;
-    font-size: 0.75rem;
-    color: var(--ink2);
-    margin-top: 0.4rem;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
-  }
+    header p {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.75rem;
+      color: var(--ink2);
+      margin-top: 0.4rem;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
 
-  .section-title {
-    font-family: 'DM Mono', monospace;
-    font-size: 0.65rem;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--ink3);
-    margin-bottom: 0.75rem;
-  }
+    .section-title {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--ink3);
+      margin-bottom: 0.75rem;
+    }
 
-  .price-section {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    gap: 1rem;
-    margin-bottom: 2rem;
-  }
+    .price-section {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
 
-  .field {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-  }
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
 
-  .field label {
-    font-family: 'DM Mono', monospace;
-    font-size: 0.65rem;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: var(--ink2);
-  }
+    .field label {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--ink2);
+    }
 
-  .field input {
-    background: var(--surface);
-    border: 1px solid var(--rule);
-    border-radius: var(--border-r);
-    padding: 0.6rem 0.75rem;
-    font-family: 'DM Mono', monospace;
-    font-size: 1rem;
-    font-weight: 500;
-    color: var(--ink);
-    width: 100%;
-    outline: none;
-    transition: border-color 0.15s;
-  }
+    .field input {
+      background: var(--surface);
+      border: 1px solid var(--rule);
+      border-radius: var(--border-r);
+      padding: 0.6rem 0.75rem;
+      font-family: 'DM Mono', monospace;
+      font-size: 1rem;
+      font-weight: 500;
+      color: var(--ink);
+      width: 100%;
+      outline: none;
+      transition: border-color 0.15s;
+    }
 
-  .field input:focus { border-color: var(--ink); }
-  .field input::placeholder { color: var(--ink3); font-weight: 400; }
+    .field input:focus {
+      border-color: var(--ink);
+    }
 
-  .change-bar {
-    background: var(--surface);
-    border: 1px solid var(--rule);
-    border-radius: var(--border-r);
-    padding: 0.75rem 1rem;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 2rem;
-    min-height: 52px;
-  }
+    .field input::placeholder {
+      color: var(--ink3);
+      font-weight: 400;
+    }
 
-  .change-label {
-    font-family: 'DM Mono', monospace;
-    font-size: 0.65rem;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: var(--ink3);
-  }
+    .change-bar {
+      background: var(--surface);
+      border: 1px solid var(--rule);
+      border-radius: var(--border-r);
+      padding: 0.75rem 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 2rem;
+      min-height: 52px;
+    }
 
-  .change-value {
-    font-family: 'DM Mono', monospace;
-    font-size: 1.4rem;
-    font-weight: 500;
-    color: var(--ink3);
-    transition: color 0.2s;
-  }
+    .change-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--ink3);
+    }
 
-  .change-value.down { color: var(--accent); }
-  .change-value.up { color: var(--green); }
+    .change-value {
+      font-family: 'DM Mono', monospace;
+      font-size: 1.4rem;
+      font-weight: 500;
+      color: var(--ink3);
+      transition: color 0.2s;
+    }
 
-  .rules-section { margin-bottom: 2rem; }
+    .change-value.down {
+      color: var(--accent);
+    }
 
-  .rules-table {
-    width: 100%;
-    border-collapse: collapse;
-    background: var(--surface);
-    border: 1px solid var(--rule);
-    border-radius: var(--border-r);
-    overflow: hidden;
-  }
+    .change-value.up {
+      color: var(--green);
+    }
 
-  .rules-table thead tr { border-bottom: 1px solid var(--rule); }
+    .rules-section {
+      margin-bottom: 2rem;
+    }
 
-  .rules-table th {
-    font-family: 'DM Mono', monospace;
-    font-size: 0.6rem;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--ink3);
-    padding: 0.6rem 0.9rem;
-    text-align: left;
-    font-weight: 400;
-    background: var(--bg);
-  }
+    .rules-table {
+      width: 100%;
+      border-collapse: collapse;
+      background: var(--surface);
+      border: 1px solid var(--rule);
+      border-radius: var(--border-r);
+      overflow: hidden;
+    }
 
-  .rules-table td {
-    padding: 0.7rem 0.9rem;
-    font-size: 0.9rem;
-    border-bottom: 1px solid var(--rule);
-    vertical-align: middle;
-  }
+    .rules-table thead tr {
+      border-bottom: 1px solid var(--rule);
+    }
 
-  .rules-table tr:last-child td { border-bottom: none; }
+    .rules-table th {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.6rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--ink3);
+      padding: 0.6rem 0.9rem;
+      text-align: left;
+      font-weight: 400;
+      background: var(--bg);
+    }
 
-  .inline-input {
-    background: transparent;
-    border: none;
-    border-bottom: 1px dashed var(--rule);
-    border-radius: 0;
-    padding: 0.1rem 0.3rem;
-    font-family: 'DM Mono', monospace;
-    font-weight: 500;
-    color: var(--ink);
-    outline: none;
-    text-align: center;
-    transition: border-color 0.15s;
-    -moz-appearance: textfield;
-  }
-  .inline-input::-webkit-outer-spin-button,
-  .inline-input::-webkit-inner-spin-button { -webkit-appearance: none; }
-  .inline-input:focus { border-bottom-color: var(--ink); }
-  .inline-input.w-thresh { width: 44px; font-size: 0.85rem; }
-  .inline-input.w-mult   { width: 52px; font-size: 0.95rem; }
+    .rules-table td {
+      padding: 0.7rem 0.9rem;
+      font-size: 0.9rem;
+      border-bottom: 1px solid var(--rule);
+      vertical-align: middle;
+    }
 
-  .cond-cell {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    flex-wrap: wrap;
-  }
-  .cond-text {
-    font-family: 'DM Mono', monospace;
-    font-size: 0.75rem;
-  }
+    .rules-table tr:last-child td {
+      border-bottom: none;
+    }
 
-  .tag {
-    display: inline-block;
-    font-family: 'DM Mono', monospace;
-    font-size: 0.65rem;
-    letter-spacing: 0.04em;
-    padding: 0.2rem 0.5rem;
-    border-radius: 2px;
-    font-weight: 500;
-  }
+    .inline-input {
+      background: transparent;
+      border: none;
+      border-bottom: 1px dashed var(--rule);
+      border-radius: 0;
+      padding: 0.1rem 0.3rem;
+      font-family: 'DM Mono', monospace;
+      font-weight: 500;
+      color: var(--ink);
+      outline: none;
+      text-align: center;
+      transition: border-color 0.15s;
+      -moz-appearance: textfield;
+    }
 
-  .tag-down2 { background: var(--accent-light); color: var(--accent); }
-  .tag-down1 { background: var(--amber-light); color: var(--amber); }
-  .tag-flat  { background: #F0EEE8; color: var(--ink2); }
-  .tag-up    { background: var(--green-light); color: var(--green); }
+    .inline-input::-webkit-outer-spin-button,
+    .inline-input::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+    }
 
-  tr.active-row td { background: #F7F4EE; }
-  tr.active-row .tag-down2 { background: var(--accent); color: #fff; }
-  tr.active-row .tag-down1 { background: var(--amber); color: #fff; }
-  tr.active-row .tag-flat  { background: var(--ink2); color: #fff; }
-  tr.active-row .tag-up    { background: var(--green); color: #fff; }
+    .inline-input:focus {
+      border-bottom-color: var(--ink);
+    }
 
-  .preview-amt {
-    font-family: 'DM Mono', monospace;
-    font-size: 0.85rem;
-    color: var(--ink2);
-  }
+    .inline-input.w-thresh {
+      width: 44px;
+      font-size: 0.85rem;
+    }
 
-  .result-section {
-    border: 1.5px solid var(--ink);
-    border-radius: var(--border-r);
-    padding: 1.5rem;
-    display: flex;
-    align-items: flex-end;
-    justify-content: space-between;
-    gap: 1rem;
-    background: var(--surface);
-  }
+    .inline-input.w-mult {
+      width: 52px;
+      font-size: 0.95rem;
+    }
 
-  .result-left .result-label {
-    font-family: 'DM Mono', monospace;
-    font-size: 0.65rem;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--ink3);
-    margin-bottom: 0.5rem;
-  }
+    .cond-cell {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      flex-wrap: wrap;
+    }
 
-  .result-rule-name {
-    font-size: 0.95rem;
-    color: var(--ink2);
-  }
+    .cond-text {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.75rem;
+    }
 
-  .result-amount {
-    font-family: 'DM Mono', monospace;
-    font-size: 2.4rem;
-    font-weight: 500;
-    color: var(--ink);
-    letter-spacing: -0.03em;
-    line-height: 1;
-    white-space: nowrap;
-  }
+    .tag {
+      display: inline-block;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.04em;
+      padding: 0.2rem 0.5rem;
+      border-radius: 2px;
+      font-weight: 500;
+    }
 
-  .result-amount.empty { color: var(--ink3); }
-  .result-amount.highlight { color: var(--accent); }
+    .tag-down2 {
+      background: var(--accent-light);
+      color: var(--accent);
+    }
 
-  .mult-badge {
-    font-family: 'DM Mono', monospace;
-    font-size: 0.75rem;
-    background: var(--ink);
-    color: var(--bg);
-    padding: 0.3rem 0.7rem;
-    border-radius: 2px;
-    align-self: flex-start;
-  }
+    .tag-down1 {
+      background: var(--amber-light);
+      color: var(--amber);
+    }
 
-  .mult-badge.empty {
-    background: var(--rule);
-    color: var(--ink3);
-  }
+    .tag-flat {
+      background: #F0EEE8;
+      color: var(--ink2);
+    }
 
-  @media (max-width: 480px) {
-    .price-section { grid-template-columns: 1fr 1fr; }
-    .price-section .field:last-child { grid-column: 1 / -1; }
-    .result-amount { font-size: 1.8rem; }
-  }
-</style>
+    .tag-up {
+      background: var(--green-light);
+      color: var(--green);
+    }
+
+    tr.active-row td {
+      background: #F7F4EE;
+    }
+
+    tr.active-row .tag-down2 {
+      background: var(--accent);
+      color: #fff;
+    }
+
+    tr.active-row .tag-down1 {
+      background: var(--amber);
+      color: #fff;
+    }
+
+    tr.active-row .tag-flat {
+      background: var(--ink2);
+      color: #fff;
+    }
+
+    tr.active-row .tag-up {
+      background: var(--green);
+      color: #fff;
+    }
+
+    .preview-amt {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.85rem;
+      color: var(--ink2);
+    }
+
+    .result-section {
+      border: 1.5px solid var(--ink);
+      border-radius: var(--border-r);
+      padding: 1.5rem;
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 1rem;
+      background: var(--surface);
+    }
+
+    .result-left .result-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--ink3);
+      margin-bottom: 0.5rem;
+    }
+
+    .result-rule-name {
+      font-size: 0.95rem;
+      color: var(--ink2);
+    }
+
+    .result-amount {
+      font-family: 'DM Mono', monospace;
+      font-size: 2.4rem;
+      font-weight: 500;
+      color: var(--ink);
+      letter-spacing: -0.03em;
+      line-height: 1;
+      white-space: nowrap;
+    }
+
+    .result-amount.empty {
+      color: var(--ink3);
+    }
+
+    .result-amount.highlight {
+      color: var(--accent);
+    }
+
+    .mult-badge {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.75rem;
+      background: var(--ink);
+      color: var(--bg);
+      padding: 0.3rem 0.7rem;
+      border-radius: 2px;
+      align-self: flex-start;
+    }
+
+    .mult-badge.empty {
+      background: var(--rule);
+      color: var(--ink3);
+    }
+
+    @media (max-width: 480px) {
+      .price-section {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .price-section .field:last-child {
+        grid-column: 1 / -1;
+      }
+
+      .result-amount {
+        font-size: 1.8rem;
+      }
+    }
+  </style>
 </head>
+
 <body>
-<div class="container">
-  <header>
-    <h1>定投计算器</h1>
-    <p>Dollar-Cost Averaging · 动态调仓策略</p>
-  </header>
+  <div class="container">
+    <header>
+      <h1>定投计算器</h1>
+      <p>Dollar-Cost Averaging · 动态调仓策略</p>
+    </header>
 
-  <p class="section-title">价格输入</p>
-  <div class="price-section">
-    <div class="field">
-      <label>上周收盘价</label>
-      <input type="number" id="lastPrice" placeholder="0.00" min="0" step="0.01">
+    <p class="section-title">价格输入</p>
+    <div class="price-section">
+      <div class="field">
+        <label>上周收盘价</label>
+        <input type="number" id="lastPrice" placeholder="0.00" min="0" step="0.01">
+      </div>
+      <div class="field">
+        <label>当周收盘价</label>
+        <input type="number" id="thisPrice" placeholder="0.00" min="0" step="0.01">
+      </div>
+      <div class="field">
+        <label>基础金额（元）</label>
+        <input type="number" id="baseAmount" placeholder="1000" min="0" step="100">
+      </div>
     </div>
-    <div class="field">
-      <label>当周收盘价</label>
-      <input type="number" id="thisPrice" placeholder="0.00" min="0" step="0.01">
+
+    <div class="change-bar">
+      <span class="change-label">本周涨跌幅</span>
+      <span class="change-value" id="changeDisplay">——</span>
     </div>
-    <div class="field">
-      <label>基础金额（元）</label>
-      <input type="number" id="baseAmount" placeholder="1000" min="0" step="100">
+
+    <p class="section-title">投资规则 · 幅度与倍数均可编辑</p>
+    <div class="rules-section">
+      <table class="rules-table">
+        <thead>
+          <tr>
+            <th>触发条件（幅度可编辑）</th>
+            <th>倍数</th>
+            <th>预计金额</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr id="row-down2">
+            <td>
+              <div class="cond-cell">
+                <span class="tag tag-down2">▼</span>
+                <span class="cond-text">下跌 ≥</span>
+                <input class="inline-input w-thresh" type="number" id="thresh-down2" value="20" min="0.1" max="99"
+                  step="1">
+                <span class="cond-text">%</span>
+              </div>
+            </td>
+            <td><input class="inline-input w-mult" type="number" id="mult-down2" value="2" min="0" step="0.1"> ×</td>
+            <td class="preview-amt" id="prev-down2">—</td>
+          </tr>
+          <tr id="row-down1">
+            <td>
+              <div class="cond-cell">
+                <span class="tag tag-down1">▼</span>
+                <span class="cond-text">下跌 ≥</span>
+                <input class="inline-input w-thresh" type="number" id="thresh-down1" value="10" min="0.1" max="99"
+                  step="1">
+                <span class="cond-text">%</span>
+              </div>
+            </td>
+            <td><input class="inline-input w-mult" type="number" id="mult-down1" value="1.5" min="0" step="0.1"> ×</td>
+            <td class="preview-amt" id="prev-down1">—</td>
+          </tr>
+          <tr id="row-flat">
+            <td>
+              <div class="cond-cell">
+                <span class="tag tag-flat">—</span>
+                <span class="cond-text">其他情况</span>
+              </div>
+            </td>
+            <td><input class="inline-input w-mult" type="number" id="mult-flat" value="1" min="0" step="0.1"> ×</td>
+            <td class="preview-amt" id="prev-flat">—</td>
+          </tr>
+          <tr id="row-up">
+            <td>
+              <div class="cond-cell">
+                <span class="tag tag-up">▲</span>
+                <span class="cond-text">上涨 ≥</span>
+                <input class="inline-input w-thresh" type="number" id="thresh-up" value="10" min="0.1" max="99"
+                  step="1">
+                <span class="cond-text">%</span>
+              </div>
+            </td>
+            <td><input class="inline-input w-mult" type="number" id="mult-up" value="0.5" min="0" step="0.1"> ×</td>
+            <td class="preview-amt" id="prev-up">—</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="result-section">
+      <div class="result-left">
+        <p class="result-label">本期投资金额</p>
+        <p class="result-rule-name" id="resultRule">—</p>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:0.5rem;">
+        <span class="mult-badge empty" id="multBadge">—</span>
+        <span class="result-amount empty" id="resultAmt">——</span>
+      </div>
     </div>
   </div>
 
-  <div class="change-bar">
-    <span class="change-label">本周涨跌幅</span>
-    <span class="change-value" id="changeDisplay">——</span>
-  </div>
+  <script>
+    const CACHE_KEY = 'dca_calculator_v1';
+    const CACHED_FIELDS = ['lastPrice', 'thisPrice', 'baseAmount', 'thresh-down2', 'thresh-down1', 'thresh-up', 'mult-down2', 'mult-down1', 'mult-flat', 'mult-up'];
 
-  <p class="section-title">投资规则 · 幅度与倍数均可编辑</p>
-  <div class="rules-section">
-    <table class="rules-table">
-      <thead>
-        <tr>
-          <th>触发条件（幅度可编辑）</th>
-          <th>倍数</th>
-          <th>预计金额</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr id="row-down2">
-          <td>
-            <div class="cond-cell">
-              <span class="tag tag-down2">▼</span>
-              <span class="cond-text">下跌 ≥</span>
-              <input class="inline-input w-thresh" type="number" id="thresh-down2" value="20" min="0.1" max="99" step="1">
-              <span class="cond-text">%</span>
-            </div>
-          </td>
-          <td><input class="inline-input w-mult" type="number" id="mult-down2" value="2" min="0" step="0.1"> ×</td>
-          <td class="preview-amt" id="prev-down2">—</td>
-        </tr>
-        <tr id="row-down1">
-          <td>
-            <div class="cond-cell">
-              <span class="tag tag-down1">▼</span>
-              <span class="cond-text">下跌 ≥</span>
-              <input class="inline-input w-thresh" type="number" id="thresh-down1" value="10" min="0.1" max="99" step="1">
-              <span class="cond-text">%</span>
-            </div>
-          </td>
-          <td><input class="inline-input w-mult" type="number" id="mult-down1" value="1.5" min="0" step="0.1"> ×</td>
-          <td class="preview-amt" id="prev-down1">—</td>
-        </tr>
-        <tr id="row-flat">
-          <td>
-            <div class="cond-cell">
-              <span class="tag tag-flat">—</span>
-              <span class="cond-text">其他情况</span>
-            </div>
-          </td>
-          <td><input class="inline-input w-mult" type="number" id="mult-flat" value="1" min="0" step="0.1"> ×</td>
-          <td class="preview-amt" id="prev-flat">—</td>
-        </tr>
-        <tr id="row-up">
-          <td>
-            <div class="cond-cell">
-              <span class="tag tag-up">▲</span>
-              <span class="cond-text">上涨 ≥</span>
-              <input class="inline-input w-thresh" type="number" id="thresh-up" value="10" min="0.1" max="99" step="1">
-              <span class="cond-text">%</span>
-            </div>
-          </td>
-          <td><input class="inline-input w-mult" type="number" id="mult-up" value="0.5" min="0" step="0.1"> ×</td>
-          <td class="preview-amt" id="prev-up">—</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
+    function saveCache() {
+      const data = {};
+      CACHED_FIELDS.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) data[id] = el.value;
+      });
+      try { localStorage.setItem(CACHE_KEY, JSON.stringify(data)); } catch (e) { }
+    }
 
-  <div class="result-section">
-    <div class="result-left">
-      <p class="result-label">本期投资金额</p>
-      <p class="result-rule-name" id="resultRule">—</p>
-    </div>
-    <div style="display:flex;flex-direction:column;align-items:flex-end;gap:0.5rem;">
-      <span class="mult-badge empty" id="multBadge">—</span>
-      <span class="result-amount empty" id="resultAmt">——</span>
-    </div>
-  </div>
-</div>
+    function loadCache() {
+      try {
+        const raw = localStorage.getItem(CACHE_KEY);
+        if (!raw) return;
+        const data = JSON.parse(raw);
+        CACHED_FIELDS.forEach(id => {
+          const el = document.getElementById(id);
+          if (el && data[id] !== undefined && data[id] !== '') el.value = data[id];
+        });
+      } catch (e) { }
+    }
 
-<script>
-const CACHE_KEY = 'dca_calculator_v1';
-const CACHED_FIELDS = ['lastPrice', 'baseAmount', 'thresh-down2', 'thresh-down1', 'thresh-up', 'mult-down2', 'mult-down1', 'mult-flat', 'mult-up'];
+    const ids = {
+      last: document.getElementById('lastPrice'),
+      curr: document.getElementById('thisPrice'),
+      base: document.getElementById('baseAmount'),
+      changeDisplay: document.getElementById('changeDisplay'),
+      resultRule: document.getElementById('resultRule'),
+      resultAmt: document.getElementById('resultAmt'),
+      multBadge: document.getElementById('multBadge'),
+    };
 
-function saveCache() {
-  const data = {};
-  CACHED_FIELDS.forEach(id => {
-    const el = document.getElementById(id);
-    if (el) data[id] = el.value;
-  });
-  try { localStorage.setItem(CACHE_KEY, JSON.stringify(data)); } catch(e) {}
-}
+    function getThresh(id) {
+      const v = parseFloat(document.getElementById('thresh-' + id).value);
+      return isNaN(v) || v <= 0 ? null : v / 100;
+    }
+    function getMult(id) {
+      const v = parseFloat(document.getElementById('mult-' + id).value);
+      return isNaN(v) ? 1 : v;
+    }
 
-function loadCache() {
-  try {
-    const raw = localStorage.getItem(CACHE_KEY);
-    if (!raw) return;
-    const data = JSON.parse(raw);
-    CACHED_FIELDS.forEach(id => {
-      const el = document.getElementById(id);
-      if (el && data[id] !== undefined && data[id] !== '') el.value = data[id];
-    });
-  } catch(e) {}
-}
+    function fmt(n) {
+      return '¥' + n.toLocaleString('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
 
-const ids = {
-  last: document.getElementById('lastPrice'),
-  curr: document.getElementById('thisPrice'),
-  base: document.getElementById('baseAmount'),
-  changeDisplay: document.getElementById('changeDisplay'),
-  resultRule: document.getElementById('resultRule'),
-  resultAmt: document.getElementById('resultAmt'),
-  multBadge: document.getElementById('multBadge'),
-};
+    function calc() {
+      saveCache();
+      const last = parseFloat(ids.last.value);
+      const curr = parseFloat(ids.curr.value);
+      const base = parseFloat(ids.base.value);
 
-function getThresh(id) {
-  const v = parseFloat(document.getElementById('thresh-' + id).value);
-  return isNaN(v) || v <= 0 ? null : v / 100;
-}
-function getMult(id) {
-  const v = parseFloat(document.getElementById('mult-' + id).value);
-  return isNaN(v) ? 1 : v;
-}
+      const tDown2 = getThresh('down2');
+      const tDown1 = getThresh('down1');
+      const tUp = getThresh('up');
 
-function fmt(n) {
-  return '¥' + n.toLocaleString('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-}
+      const ruleIds = ['down2', 'down1', 'flat', 'up'];
+      ruleIds.forEach(r => document.getElementById('row-' + r).classList.remove('active-row'));
 
-function calc() {
-  saveCache();
-  const last = parseFloat(ids.last.value);
-  const curr = parseFloat(ids.curr.value);
-  const base = parseFloat(ids.base.value);
+      ruleIds.forEach(r => {
+        const m = getMult(r);
+        const prev = document.getElementById('prev-' + r);
+        prev.textContent = (!isNaN(base) && base > 0) ? fmt(base * m) : '—';
+      });
 
-  const tDown2 = getThresh('down2');
-  const tDown1 = getThresh('down1');
-  const tUp    = getThresh('up');
+      if (!last || !curr || isNaN(base) || last <= 0 || curr <= 0 || base <= 0) {
+        ids.changeDisplay.textContent = '——';
+        ids.changeDisplay.className = 'change-value';
+        ids.resultRule.textContent = '—';
+        ids.resultAmt.textContent = '——';
+        ids.resultAmt.className = 'result-amount empty';
+        ids.multBadge.textContent = '—';
+        ids.multBadge.className = 'mult-badge empty';
+        return;
+      }
 
-  const ruleIds = ['down2','down1','flat','up'];
-  ruleIds.forEach(r => document.getElementById('row-' + r).classList.remove('active-row'));
+      const change = (curr - last) / last;
+      const pct = (change * 100).toFixed(2);
+      const sign = change >= 0 ? '+' : '';
+      ids.changeDisplay.textContent = sign + pct + '%';
+      ids.changeDisplay.className = 'change-value' + (change < -0.001 ? ' down' : change > 0.001 ? ' up' : '');
 
-  ruleIds.forEach(r => {
-    const m = getMult(r);
-    const prev = document.getElementById('prev-' + r);
-    prev.textContent = (!isNaN(base) && base > 0) ? fmt(base * m) : '—';
-  });
+      let matchId, matchLabel, mult;
 
-  if (!last || !curr || isNaN(base) || last <= 0 || curr <= 0 || base <= 0) {
-    ids.changeDisplay.textContent = '——';
-    ids.changeDisplay.className = 'change-value';
-    ids.resultRule.textContent = '—';
-    ids.resultAmt.textContent = '——';
-    ids.resultAmt.className = 'result-amount empty';
-    ids.multBadge.textContent = '—';
-    ids.multBadge.className = 'mult-badge empty';
-    return;
-  }
+      if (tDown2 && change <= -tDown2) {
+        matchId = 'down2'; matchLabel = '下跌 ≥ ' + (tDown2 * 100).toFixed(0) + '%，加倍定投';
+      } else if (tDown1 && change <= -tDown1) {
+        matchId = 'down1'; matchLabel = '下跌 ≥ ' + (tDown1 * 100).toFixed(0) + '%，加仓定投';
+      } else if (tUp && change >= tUp) {
+        matchId = 'up'; matchLabel = '上涨 ≥ ' + (tUp * 100).toFixed(0) + '%，减仓定投';
+      } else {
+        matchId = 'flat'; matchLabel = '正常定投';
+      }
 
-  const change = (curr - last) / last;
-  const pct = (change * 100).toFixed(2);
-  const sign = change >= 0 ? '+' : '';
-  ids.changeDisplay.textContent = sign + pct + '%';
-  ids.changeDisplay.className = 'change-value' + (change < -0.001 ? ' down' : change > 0.001 ? ' up' : '');
+      mult = getMult(matchId);
+      const invest = base * mult;
 
-  let matchId, matchLabel, mult;
+      document.getElementById('row-' + matchId).classList.add('active-row');
+      ids.resultRule.textContent = matchLabel;
+      ids.resultAmt.textContent = fmt(invest);
+      ids.resultAmt.className = 'result-amount' + (matchId === 'down2' || matchId === 'down1' ? ' highlight' : '');
+      ids.multBadge.textContent = mult + ' ×';
+      ids.multBadge.className = 'mult-badge';
+    }
 
-  if (tDown2 && change <= -tDown2) {
-    matchId = 'down2'; matchLabel = '下跌 ≥ ' + (tDown2*100).toFixed(0) + '%，加倍定投';
-  } else if (tDown1 && change <= -tDown1) {
-    matchId = 'down1'; matchLabel = '下跌 ≥ ' + (tDown1*100).toFixed(0) + '%，加仓定投';
-  } else if (tUp && change >= tUp) {
-    matchId = 'up'; matchLabel = '上涨 ≥ ' + (tUp*100).toFixed(0) + '%，减仓定投';
-  } else {
-    matchId = 'flat'; matchLabel = '正常定投';
-  }
+    document.querySelectorAll('input').forEach(el => el.addEventListener('input', calc));
 
-  mult = getMult(matchId);
-  const invest = base * mult;
-
-  document.getElementById('row-' + matchId).classList.add('active-row');
-  ids.resultRule.textContent = matchLabel;
-  ids.resultAmt.textContent = fmt(invest);
-  ids.resultAmt.className = 'result-amount' + (matchId === 'down2' || matchId === 'down1' ? ' highlight' : '');
-  ids.multBadge.textContent = mult + ' ×';
-  ids.multBadge.className = 'mult-badge';
-}
-
-document.querySelectorAll('input').forEach(el => el.addEventListener('input', calc));
-
-loadCache();
-calc();
-</script>
+    loadCache();
+    calc();
+  </script>
 </body>
+
 </html>
